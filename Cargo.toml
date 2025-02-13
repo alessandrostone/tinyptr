@@ -1,0 +1,9 @@
+[package]
+name = "tinypointers"
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <you@example.com>"]
+description = "A production-ready library for tiny pointers using dynamic dereference tables with resizing."
+license = "MIT"
+
+[dependencies]
