@@ -8,7 +8,7 @@
 //! ## Example
 //!
 //! ```rust
-//! use tinypointers::dynamic_table::*;
+//! use tynyptr::dynamic_table::*;
 //!
 //! // Create a table with an initial capacity of 4.
 //! let mut table = DynamicTinyPointerTable::new(4);

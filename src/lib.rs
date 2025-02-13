@@ -1,4 +1,4 @@
-//! # TinyPointers
+//! # tynyptr
 //!
 //! This crate provides a production-ready dynamic dereference table for “tiny pointers”.
 //! Rather than using full machine pointers (which require Ω(log n) bits) our library represents

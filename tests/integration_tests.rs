@@ -1,5 +1,5 @@
-// use tinypointers::dynamic_table::*;
-use tinypointers::dynamic_table::DynamicTinyPointerTable;
+// use tynyptr::dynamic_table::*;
+use tynyptr::dynamic_table::DynamicTinyPointerTable;
 
 #[test]
 fn integration_alloc_free() {
