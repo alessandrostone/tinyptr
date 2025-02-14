@@ -1,9 +1,11 @@
 [package]
 name = "tynyptr"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
-authors = ["Your Name <you@example.com>"]
+authors = ["Alessandro Aresta <performerstone@gmail.com>"]
 description = "A production-ready library for tiny pointers using dynamic dereference tables with resizing."
 license = "MIT"
+repository = "https://github.com/alessandrostone/tinyptr"
+readme = "README.md"
 
 [dependencies]
