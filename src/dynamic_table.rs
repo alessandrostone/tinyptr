@@ -300,4 +300,95 @@ mod tests {
         // The new pointer should access the new value.
         assert_eq!(table.get(new_ptr), Some(&200));
     }
+
+    /// An extremely detailed, complex test that simulates a long sequence of mixed operations.
+    ///
+    /// This test uses a deterministic pattern to:
+    /// - Allocate new values.
+    /// - Free values from random positions.
+    /// - Read values to ensure consistency.
+    /// - Mutate values via mutable references.
+    ///
+    /// Throughout the test, it tracks the expected value of each allocated pointer,
+    /// ensuring that generational safety and table consistency are maintained even after many operations.
+    #[test]
+    fn test_complex_behavior() {
+        let mut table = DynamicTinyPointerTable::new(4);
+        // `active` tracks tuples of (TinyPointer, expected_value).
+        let mut active: Vec<(TinyPointer, i32)> = Vec::new();
+
+        // Run a large number of iterations to simulate mixed operations.
+        for i in 0..1000 {
+            match i % 4 {
+                // Operation 0: Allocate a new value.
+                0 => {
+                    let value = i as i32;
+                    let ptr = table.allocate(value);
+                    active.push((ptr, value));
+                }
+                // Operation 1: Free a pointer if available.
+                1 => {
+                    if !active.is_empty() {
+                        // Choose a pointer deterministically.
+                        let index = i as usize % active.len();
+                        let (ptr, expected_value) = active.swap_remove(index);
+                        let freed = table.free(ptr);
+                        assert_eq!(
+                            freed,
+                            Some(expected_value),
+                            "Failed to free pointer at iteration {}: expected {}, got {:?}",
+                            i,
+                            expected_value,
+                            table.get(ptr)
+                        );
+                        // Ensure that the pointer is now invalid.
+                        assert_eq!(table.get(ptr), None);
+                    }
+                }
+                // Operation 2: Read the value of an existing pointer.
+                2 => {
+                    if !active.is_empty() {
+                        let index = i as usize % active.len();
+                        let (ptr, expected_value) = active[index];
+                        let got = table.get(ptr);
+                        assert_eq!(
+                            got,
+                            Some(&expected_value),
+                            "Mismatched value at iteration {}: expected {}, got {:?}",
+                            i,
+                            expected_value,
+                            got
+                        );
+                    }
+                }
+                // Operation 3: Mutate a value via get_mut.
+                3 => {
+                    if !active.is_empty() {
+                        let index = i as usize % active.len();
+                        let (ptr, ref mut expected_value) = active[index];
+                        if let Some(value_mut) = table.get_mut(ptr) {
+                            // For example, increment the value.
+                            *value_mut += 1;
+                            *expected_value += 1;
+                        } else {
+                            panic!("Expected mutable access at iteration {}", i);
+                        }
+                    }
+                }
+                _ => unreachable!(),
+            }
+            // Optionally, check that the table's allocated count matches the active pointer count.
+            assert_eq!(
+                table.allocated(),
+                active.len(),
+                "Allocated count mismatch at iteration {}",
+                i
+            );
+        }
+
+        // Final verification: all active pointers should return their expected values.
+        for (ptr, expected_value) in active.iter() {
+            assert_eq!(table.get(*ptr), Some(expected_value));
+        }
+    }
 }
