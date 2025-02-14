@@ -72,7 +72,7 @@ fn integration_get_mut() {
 fn integration_generation_safety() {
     let mut table = DynamicTinyPointerTable::new(4);
     let ptr = table.allocate(10);
-    
+
     // Free the pointer.
     let freed = table.free(ptr);
     assert_eq!(freed, Some(10));
@@ -130,7 +130,10 @@ fn integration_mixed_usage() {
             let ptr = pointers.remove(index);
             let val = table.free(ptr);
             // Make sure freeing returns a value.
-            assert!(val.is_some(), "Freeing a valid pointer should return a value");
+            assert!(
+                val.is_some(),
+                "Freeing a valid pointer should return a value"
+            );
         } else {
             // Allocate a new pointer.
             let ptr = table.allocate(i);

@@ -34,7 +34,7 @@
 //!     table.allocate(i);
 //! }
 //! assert!(table.capacity() >= 100);
-//! ``` 
+//! ```
 
 use std::fmt;
 
@@ -55,7 +55,7 @@ impl TinyPointer {
     pub fn index(&self) -> usize {
         self.index as usize
     }
-    
+
     /// Returns the generation stored in this pointer.
     #[inline]
     pub fn generation(&self) -> u32 {
@@ -101,7 +101,10 @@ impl<T: Clone> DynamicTinyPointerTable<T> {
         let mut slots = Vec::with_capacity(initial_capacity);
         let mut free_list = Vec::with_capacity(initial_capacity);
         for i in 0..initial_capacity {
-            slots.push(Slot { value: None, generation: 0 });
+            slots.push(Slot {
+                value: None,
+                generation: 0,
+            });
             free_list.push(i);
         }
         Self { slots, free_list }
@@ -138,7 +141,10 @@ impl<T: Clone> DynamicTinyPointerTable<T> {
         let slot = &mut self.slots[idx];
         slot.value = Some(Box::new(value));
         // Return a pointer that includes the current generation.
-        TinyPointer { index: idx as u32, generation: slot.generation }
+        TinyPointer {
+            index: idx as u32,
+            generation: slot.generation,
+        }
     }
 
     /// Returns an immutable reference to the value corresponding to `ptr`,
@@ -193,7 +199,10 @@ impl<T: Clone> DynamicTinyPointerTable<T> {
         let new_capacity = old_capacity * 2;
         self.slots.reserve(new_capacity - old_capacity);
         for i in old_capacity..new_capacity {
-            self.slots.push(Slot { value: None, generation: 0 });
+            self.slots.push(Slot {
+                value: None,
+                generation: 0,
+            });
             self.free_list.push(i);
         }
     }
